@@ -1,10 +1,26 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "rice-agents"
 version = "0.1.0"
-description = "Add your description here"
+description = "A modular, provider-agnostic framework for building and orchestrating AI agents."
 readme = "README.md"
-requires-python = ">=3.14"
-dependencies = []
+requires-python = ">=3.11"
+authors = [{ name = "Shankha", email = "shankha@tryrice.com" }]
+dependencies = [
+    "anthropic>=0.75.0",
+    "chromadb>=0.5.0",
+    "google-genai==1.56.0",
+    "nest-asyncio>=1.6.0",
+    "openai>=2.14.0",
+    "pydantic>=2.12.5",
+    "python-dotenv>=1.2.1",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/rice-agents"
 
 [dependency-groups]
 dev = ["ruff>=0.14.9", "ty>=0.0.3"]
