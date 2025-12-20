@@ -1,22 +1,55 @@
 # Rice Agents Framework - Usage Guide
 
-## Setup
+Rice Agents is a modular, provider-agnostic framework for building and orchestrating AI agents in Python. It supports multiple LLM providers (Gemini, OpenAI), tool usage, long-term memory (RAG), and complex orchestration patterns like sequential chains, parallel swarms, and adaptive planning.
 
-Ensure dependencies are installed and `.env` is configured with keys.
+## Installation
+
+Install the package via pip (or uv):
 
 ```bash
-uv sync
+pip install rice-agents
+# or
+uv add rice-agents
 ```
 
-`.env`:
+## Configuration
+
+Set up your environment variables in a `.env` file or export them directly:
+
 ```env
 GOOGLE_API_KEY=AIza...
 OPENAI_API_KEY=sk-...
 ```
 
-## 1. Defining Tools
+## 1. Creating a Basic Agent
 
-Use the `@tool` decorator to turn any Python function into an agent-ready tool.
+The `Agent` is the core unit. It wraps an LLM provider and handles conversation history.
+
+```python
+import asyncio
+from rice_agents.llms.gemini_provider import GeminiProvider
+from rice_agents.agents.base import Agent
+
+async def main():
+    # Initialize Provider (Gemini or OpenAI)
+    llm = GeminiProvider(model="gemini-1.5-flash")
+    
+    agent = Agent(
+        name="Assistant",
+        llm=llm,
+        system_prompt="You are a helpful assistant."
+    )
+    
+    response = await agent.run("Hello, who are you?")
+    print(response)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+## 2. Defining Tools
+
+Use the `@tool` decorator to register any Python function as a tool. The framework automatically generates schemas for the specific LLM provider.
 
 ```python
 from rice_agents.tools.base import tool
@@ -25,83 +58,76 @@ from rice_agents.tools.base import tool
 def get_weather(location: str) -> str:
     """Get the current weather for a location."""
     return f"The weather in {location} is Sunny, 25°C."
+
+# Attach tools to the agent
+agent = Agent(name="Bot", llm=llm, tools=[get_weather])
 ```
 
-## 2. Creating an Agent (with Gemini)
+## 3. Adding Memory (RAG)
 
-```python
-import asyncio
-from rice_agents.llms.gemini_provider import GeminiProvider
-from rice_agents.agents.base import Agent
-
-async def main():
-    # Initialize LLM
-    llm = GeminiProvider(model="gemini-1.5-flash")
-    
-    # Create Agent
-    agent = Agent(
-        name="WeatherBot",
-        llm=llm,
-        tools=[get_weather], # Pass the tool instance or decorated function
-        system_prompt="You are a helpful weather assistant."
-    )
-    
-    # Run
-    response = await agent.run("What is the weather in Tokyo?")
-    print(response)
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
-## 3. Using Memory (RAG)
-
-Attach a vector store to an agent to give it long-term memory.
+Give agents long-term memory using vector stores. The agent automatically retrieves relevant context before answering.
 
 ```python
 from rice_agents.memory.vector_store import ChromaDBStore
 
-# Initialize Memory
-memory = ChromaDBStore(path="./my_memory")
-memory.add_texts(["My favorite color is blue.", "I live in San Francisco."])
+# Initialize persistent memory
+memory = ChromaDBStore(path="./agent_memory")
+memory.add_texts(["User loves sci-fi movies.", "User lives in New York."])
 
-# Create Agent with Memory
 agent = Agent(name="MemoryBot", llm=llm, memory=memory)
-
-# The agent will automatically query memory before answering
-await agent.run("What is my favorite color?") 
 ```
 
-## 4. Orchestration: Sequential Flow
+## 4. Orchestration Flows
 
-Chain agents together.
+Combine agents into powerful, composable workflows.
+
+### Sequential & Parallel
+
+*   **SequentialFlow**: Chains agents together (Output of Agent A -> Input of Agent B).
+*   **ParallelFlow**: Runs agents concurrently.
 
 ```python
-from rice_agents.orchestration.flows import SequentialFlow
+from rice_agents.orchestration.flows import SequentialFlow, ParallelFlow
 
-researcher = Agent(name="Researcher", llm=llm, system_prompt="Research the topic.")
-writer = Agent(name="Writer", llm=llm, system_prompt="Write a blog post based on the research.")
+# Define Agents
+pm = Agent(name="PM", llm=llm, system_prompt="Create specs.")
+backend = Agent(name="Backend", llm=llm, system_prompt="Write API code.")
+frontend = Agent(name="Frontend", llm=llm, system_prompt="Write UI code.")
+qa = Agent(name="QA", llm=llm, system_prompt="Review the code.")
 
-flow = SequentialFlow([researcher, writer])
-final_blog = await flow.run("Quantum Computing")
+# Hierarchical Flow:
+# 1. PM creates specs -> 
+# 2. (Backend & Frontend work in parallel) -> 
+# 3. QA reviews everything
+dev_team = ParallelFlow([backend, frontend])
+pipeline = SequentialFlow([pm, dev_team, qa])
+
+result = await pipeline.run("Build a To-Do App")
 ```
 
-## 5. Orchestration: Adaptive Swarm
+### Adaptive Swarm
 
-Let a "Manager" agent plan and delegate tasks dynamically.
+Let a "Manager" agent dynamically plan the task and delegate steps to specialized agents.
 
 ```python
 from rice_agents.orchestration.adaptive import AdaptiveOrchestrator
 
-# Registry of available specialists
-agents = {
-    "coder": Agent(name="Coder", llm=llm, system_prompt="Write Python code."),
-    "reviewer": Agent(name="Reviewer", llm=llm, system_prompt="Review code for bugs."),
-    "writer": Agent(name="Writer", llm=llm, system_prompt="Write documentation.")
+specialists = {
+    "coder": Agent(name="Coder", llm=llm),
+    "tester": Agent(name="Tester", llm=llm)
 }
 
-orchestrator = AdaptiveOrchestrator(manager_llm=llm, agents=agents)
-
-# The orchestrator will create a plan (e.g., Code -> Review -> Write Docs) and execute it
-result = await orchestrator.run("Create a snake game in Python and document it.")
+orchestrator = AdaptiveOrchestrator(manager_llm=llm, agents=specialists)
+await orchestrator.run("Build a calculator app and test it.")
 ```
+
+## Examples
+
+Check the `examples/` directory for complete, runnable scripts:
+
+*   `01_basic_tool.py`: Simple tool usage.
+*   `02_memory_rag.py`: Persistent memory with ChromaDB.
+*   `03_flows.py`: Basic Sequential and Parallel flows.
+*   `04_adaptive_swarm.py`: Dynamic planning with a manager agent.
+*   `05_hierarchical_dev_team.py`: Complex nested flows (PM -> Devs -> QA).
+*   `06_interactive_filesystem.py`: Stateful agent interacting with the OS via tools.

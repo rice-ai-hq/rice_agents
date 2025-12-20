@@ -1,22 +1,23 @@
 import asyncio
-
-from ..agents.base import Agent
+from typing import Any
 
 
 class SequentialFlow:
     """
-    Executes a list of agents in sequence.
+    Executes a list of agents (or other flows) in sequence.
     The output of one agent becomes the input of the next.
     """
 
-    def __init__(self, agents: list[Agent]):
+    def __init__(self, agents: list[Any], name: str = "SequentialFlow"):
         self.agents = agents
+        self.name = name
 
     async def run(self, initial_task: str) -> str:
         current_input = initial_task
         for i, agent in enumerate(self.agents):
+            agent_name = getattr(agent, "name", f"Step-{i + 1}")
             print(
-                f"--- [SequentialFlow] Step {i + 1}/{len(self.agents)}: {agent.name} ---"
+                f"--- [{self.name}] Step {i + 1}/{len(self.agents)}: {agent_name} ---"
             )
             # We treat the previous output as the new task for the next agent
             current_input = await agent.run(current_input)
@@ -25,16 +26,17 @@ class SequentialFlow:
 
 class ParallelFlow:
     """
-    Executes a list of agents in parallel on the same task.
+    Executes a list of agents (or other flows) in parallel on the same task.
     Returns a list of results.
     """
 
-    def __init__(self, agents: list[Agent]):
+    def __init__(self, agents: list[Any], name: str = "ParallelFlow"):
         self.agents = agents
+        self.name = name
 
     async def run(self, task: str) -> list[str]:
-        print(f"--- [ParallelFlow] Starting {len(self.agents)} agents ---")
+        print(f"--- [{self.name}] Starting {len(self.agents)} agents ---")
         tasks = [agent.run(task) for agent in self.agents]
         results = await asyncio.gather(*tasks)
-        print("--- [ParallelFlow] Finished ---")
+        print(f"--- [{self.name}] Finished ---")
         return results
