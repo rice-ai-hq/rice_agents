@@ -94,4 +94,6 @@ members = [
     "examples/12_music_processing",
     ".",
     ".",
+    "examples/13_remove_drums",
+    ".",
 ]

@@ -1,13 +1,14 @@
-import os
 import asyncio
-from dotenv import load_dotenv
-from db_handler import SwarmRiceDBHandler
+import os
+
 from agents import (
     AdaptiveOrchestrator,
     DynamicWorker,
     IngestionAgent,
     SynthesizerWrapper,
 )
+from db_handler import SwarmRiceDBHandler
+from dotenv import load_dotenv
 
 load_dotenv()
 

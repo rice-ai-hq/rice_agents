@@ -20,6 +20,7 @@ members = [
     "10-code-review-swarm",
     "11-adaptive-code-review",
     "12-music-processing",
+    "13-remove-drums",
     "rice-agents",
 ]
 
@@ -220,6 +221,31 @@ requires-dist = [
 name = "12-music-processing"
 version = "0.1.0"
 source = { virtual = "examples/12_music_processing" }
+dependencies = [
+    { name = "google-genai" },
+    { name = "numpy" },
+    { name = "pydub" },
+    { name = "python-dotenv" },
+    { name = "rice-agents" },
+    { name = "ricedb" },
+    { name = "scipy" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "google-genai", specifier = ">=1.56.0" },
+    { name = "numpy", specifier = ">=2.3.5" },
+    { name = "pydub", specifier = ">=0.25.1" },
+    { name = "python-dotenv", specifier = ">=1.2.1" },
+    { name = "rice-agents", editable = "." },
+    { name = "ricedb", specifier = ">=0.1.0" },
+    { name = "scipy", specifier = ">=1.16.3" },
+]
+
+[[package]]
+name = "13-remove-drums"
+version = "0.1.0"
+source = { virtual = "examples/13_remove_drums" }
 dependencies = [
     { name = "google-genai" },
     { name = "numpy" },
