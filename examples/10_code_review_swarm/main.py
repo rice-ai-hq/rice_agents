@@ -88,11 +88,16 @@ async def run_swarm():
 if __name__ == "__main__":
     if not os.path.exists(TARGET_DIR):
         os.makedirs(TARGET_DIR)
+
+    # Ensure dummy files exist even if dir exists (e.g. created by mkdir)
+    if not os.path.exists(f"{TARGET_DIR}/auth.py"):
         # Create a security vulnerability
         with open(f"{TARGET_DIR}/auth.py", "w") as f:
             f.write(
                 "def login(u, p):\n    # TODO: remove hardcoded secret\n    secret = 'my_secret'\n    if p == secret: return True"
             )
+
+    if not os.path.exists(f"{TARGET_DIR}/heavy.py"):
         # Create a performance issue
         with open(f"{TARGET_DIR}/heavy.py", "w") as f:
             f.write("def process():\n    for i in range(1000000):\n        print(i)")

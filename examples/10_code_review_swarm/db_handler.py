@@ -142,8 +142,13 @@ class SwarmRiceDBHandler:
 
         results = self.client.search_text(
             query=query,
-            k=limit,
+            k=limit * 5,
             embedding_generator=self.embedding_generator,
             user_id=self.user_id,
         )
-        return results
+        # Client-side filtering to ensure we only get code files
+        # This avoids finding unrelated data from other examples (like Quantum Physics facts)
+        filtered = [
+            r for r in results if r.get("metadata", {}).get("type") == "code_file"
+        ]
+        return filtered[:limit]
