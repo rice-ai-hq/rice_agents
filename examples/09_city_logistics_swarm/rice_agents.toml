@@ -1,0 +1,8 @@
+[containers.SmartCityOps]
+description = "Container for City Logistics Swarm"
+memory = "ricedb"
+auto_memory = false # We will handle memory explicitly via scratchpad for this example to be more precise
+
+[containers.SmartCityOps.memory_config]
+host = "localhost"
+user_id = 1

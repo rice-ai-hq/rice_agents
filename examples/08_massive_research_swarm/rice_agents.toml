@@ -1,0 +1,8 @@
+[containers.ResearchSwarm]
+description = "Container for Massive Research Swarm"
+memory = "ricedb"
+auto_memory = true
+
+[containers.ResearchSwarm.memory_config]
+host = "localhost"
+user_id = 1

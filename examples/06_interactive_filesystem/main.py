@@ -5,6 +5,7 @@ import shutil
 from dotenv import load_dotenv
 
 from rice_agents.agents.base import Agent
+from rice_agents.containers.base import Container
 from rice_agents.llms.gemini_provider import GeminiProvider
 from rice_agents.tools.base import tool
 
@@ -66,6 +67,9 @@ async def main():
 
     llm = GeminiProvider(model="gemini-1.5-flash", api_key=api_key)
 
+    # Create a container for the sandbox
+    container = Container("SandboxEnv")
+
     # --- Create the SysAdmin Agent ---
     sys_admin = Agent(
         name="SysAdmin",
@@ -75,6 +79,7 @@ async def main():
         You are working in a persistent sandbox environment.
         Always verify your actions by listing files or reading them back after writing.
         """,
+        container=container,
     )
 
     # --- Complex Multi-Step Task ---

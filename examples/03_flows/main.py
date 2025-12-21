@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 
 from rice_agents.agents.base import Agent
+from rice_agents.containers.base import Container
 from rice_agents.llms.gemini_provider import GeminiProvider
 from rice_agents.orchestration.flows import ParallelFlow, SequentialFlow
 
@@ -20,11 +21,21 @@ async def main():
 
     # --- Sequential Flow Example ---
     print("\n=== Sequential Flow: Joke -> Explanation ===")
+
+    # Create a container for sequential agents
+    seq_container = Container("ComedyClub")
+
     comedian = Agent(
-        name="Comedian", llm=llm, system_prompt="Tell a short, obscure joke."
+        name="Comedian",
+        llm=llm,
+        system_prompt="Tell a short, obscure joke.",
+        container=seq_container,
     )
     explainer = Agent(
-        name="Explainer", llm=llm, system_prompt="Explain why the input joke is funny."
+        name="Explainer",
+        llm=llm,
+        system_prompt="Explain why the input joke is funny.",
+        container=seq_container,
     )
 
     seq_flow = SequentialFlow([comedian, explainer])
@@ -33,11 +44,21 @@ async def main():
 
     # --- Parallel Flow Example ---
     print("\n=== Parallel Flow: Haiku vs Limerick ===")
+
+    # Create a container for parallel agents
+    poet_container = Container("PoetryCorner")
+
     poet1 = Agent(
-        name="HaikuBot", llm=llm, system_prompt="Write a haiku about the topic."
+        name="HaikuBot",
+        llm=llm,
+        system_prompt="Write a haiku about the topic.",
+        container=poet_container,
     )
     poet2 = Agent(
-        name="LimerickBot", llm=llm, system_prompt="Write a limerick about the topic."
+        name="LimerickBot",
+        llm=llm,
+        system_prompt="Write a limerick about the topic.",
+        container=poet_container,
     )
 
     par_flow = ParallelFlow([poet1, poet2])

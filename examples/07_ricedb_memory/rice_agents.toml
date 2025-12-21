@@ -1,0 +1,9 @@
+[containers.ProjectContainer]
+memory = "ricedb"
+auto_memory = true
+
+[containers.ProjectContainer.memory_config]
+host = "localhost"
+user_id = 1
+username = "admin"
+password = "password123"

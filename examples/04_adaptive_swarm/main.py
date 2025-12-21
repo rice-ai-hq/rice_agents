@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 
 from rice_agents.agents.base import Agent
+from rice_agents.containers.base import Container
 from rice_agents.llms.gemini_provider import GeminiProvider
 from rice_agents.orchestration.adaptive import AdaptiveOrchestrator
 
@@ -18,22 +19,28 @@ async def main():
 
     llm = GeminiProvider(model="gemini-1.5-flash", api_key=api_key)
 
+    # Create a container for the swarm
+    swarm_container = Container("SwarmCluster")
+
     # 1. Define Specialist Agents
     agents = {
         "python_expert": Agent(
             name="PythonExpert",
             llm=llm,
             system_prompt="You are a senior Python developer. Write clean, efficient code.",
+            container=swarm_container,
         ),
         "security_auditor": Agent(
             name="SecurityAuditor",
             llm=llm,
             system_prompt="You are a security expert. Review code for vulnerabilities.",
+            container=swarm_container,
         ),
         "tech_writer": Agent(
             name="TechWriter",
             llm=llm,
             system_prompt="You are a technical writer. Write clear documentation.",
+            container=swarm_container,
         ),
     }
 

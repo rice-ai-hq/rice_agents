@@ -1,10 +1,13 @@
 import inspect
 import uuid
-from typing import Any
+from typing import Any, Optional, TYPE_CHECKING
 
 from ..llms.base import LLMProvider, ToolCall
 from ..memory.base import VectorStore
 from ..tools.base import RiceTool
+
+if TYPE_CHECKING:
+    from ..containers.base import Container
 
 
 class Agent:
@@ -20,6 +23,7 @@ class Agent:
         memory: VectorStore | None = None,
         system_prompt: str = "You are a helpful assistant.",
         session_id: str | None = None,
+        container: Optional["Container"] = None,
     ):
         self.name = name
         self.llm = llm
@@ -29,6 +33,17 @@ class Agent:
         self.history: list[dict[str, Any]] = []
         self.tool_map = {t.name: t for t in self.tools}
         self.session_id = session_id or str(uuid.uuid4())
+        self.container = container
+        if self.container is None:
+            try:
+                from ..containers import get_default_container
+
+                self.container = get_default_container()
+            except ImportError:
+                pass
+
+        if self.container:
+            self.container.register_agent(self)
 
     async def run(self, task: str) -> str:
         """
@@ -120,15 +135,22 @@ class Agent:
 
             else:
                 # No tools, final response
+                final_content = "Error: Empty response from LLM."
                 if response.content:
                     self.history.append(
                         {"role": "assistant", "content": response.content}
                     )
-                    return response.content
-                else:
-                    return "Error: Empty response from LLM."
+                    final_content = response.content
 
-        return "Max turns reached."
+                if self.container:
+                    self.container.on_agent_finish(self, task, final_content)
+
+                return final_content
+
+        msg = "Max turns reached."
+        if self.container:
+            self.container.on_agent_finish(self, task, msg)
+        return msg
 
     async def _execute_tool(self, tool_call: ToolCall) -> Any:
         tool = self.tool_map.get(tool_call.name)

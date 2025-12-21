@@ -1,0 +1,7 @@
+[default_container]
+memory = "ricedb"
+auto_memory = true
+
+[default_container.memory_config]
+host = "localhost"
+user_id = 1

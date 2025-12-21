@@ -5,6 +5,7 @@ import shutil
 from dotenv import load_dotenv
 
 from rice_agents.agents.base import Agent
+from rice_agents.containers.base import Container
 from rice_agents.llms.gemini_provider import GeminiProvider
 from rice_agents.memory.vector_store import ChromaDBStore
 
@@ -37,11 +38,13 @@ async def main():
     # 2. Create Agent with Memory
     llm = GeminiProvider(model="gemini-1.5-flash", api_key=api_key)
 
+    container = Container("PersonalContainer")
     agent = Agent(
         name="PersonalBot",
         llm=llm,
         memory=memory,
         system_prompt="You are a personal assistant. Use your memory to answer questions about the user.",
+        container=container,
     )
 
     # 3. Run - The agent should auto-retrieve relevant facts

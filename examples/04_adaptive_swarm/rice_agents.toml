@@ -1,0 +1,2 @@
+[containers.SwarmCluster]
+description = "Container for Adaptive Swarm Agents"

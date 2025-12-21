@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 
 from rice_agents.agents.base import Agent
+from rice_agents.containers.base import Container
 from rice_agents.llms.gemini_provider import GeminiProvider
 from rice_agents.tools.base import tool
 
@@ -29,12 +30,14 @@ async def main():
     # 2. Initialize Provider
     llm = GeminiProvider(model="gemini-1.5-flash", api_key=api_key)
 
-    # 3. Create Agent
+    # 3. Create Container and Agent
+    container = Container("FinanceContainer")
     agent = Agent(
         name="FinanceBot",
         llm=llm,
         tools=[get_stock_price],
         system_prompt="You are a helpful financial assistant. Use tools to find data.",
+        container=container,
     )
 
     # 4. Run

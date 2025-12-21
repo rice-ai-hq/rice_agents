@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 
 from rice_agents.agents.base import Agent
+from rice_agents.containers.base import Container
 from rice_agents.llms.gemini_provider import GeminiProvider
 from rice_agents.orchestration.flows import ParallelFlow, SequentialFlow
 
@@ -18,6 +19,9 @@ async def main():
 
     llm = GeminiProvider(model="gemini-1.5-flash", api_key=api_key)
 
+    # Create a container for the development team
+    dev_container = Container("ProductTeam")
+
     # --- 1. Define the Agents ---
 
     # The Product Manager breaks down the idea into requirements
@@ -27,6 +31,7 @@ async def main():
         system_prompt="""You are a strict Product Manager. 
         Given a feature idea, output a clear, concise text specification. 
         Focus on what needs to be built for Backend (API) and Frontend (UI).""",
+        container=dev_container,
     )
 
     # Backend Developer
@@ -36,6 +41,7 @@ async def main():
         system_prompt="""You are a Python Backend Developer. 
         Given a spec, write a Python Flask route that implements the logic. 
         Return ONLY code.""",
+        container=dev_container,
     )
 
     # Frontend Developer
@@ -45,6 +51,7 @@ async def main():
         system_prompt="""You are a React Frontend Developer. 
         Given a spec, write a React component that implements the UI. 
         Return ONLY code.""",
+        container=dev_container,
     )
 
     # QA Engineer (The Merger)
@@ -58,6 +65,7 @@ async def main():
         1. Review if they match the implied requirements.
         2. Combine them into a single final report titled 'Deployment Package'.
         """,
+        container=dev_container,
     )
 
     # --- 2. Build the Hierarchy ---

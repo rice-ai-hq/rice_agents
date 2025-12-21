@@ -1,0 +1,5 @@
+[containers.ComedyClub]
+description = "Container for Joke Agents"
+
+[containers.PoetryCorner]
+description = "Container for Poet Agents"
