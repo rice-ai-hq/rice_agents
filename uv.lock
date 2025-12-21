@@ -17,6 +17,7 @@ members = [
     "07-ricedb-memory",
     "08-massive-research-swarm",
     "09-city-logistics-swarm",
+    "10-code-review-swarm",
     "rice-agents",
 ]
 
@@ -173,6 +174,25 @@ requires-dist = [
     { name = "google-genai", specifier = ">=1.56.0" },
     { name = "python-dotenv", specifier = ">=1.2.1" },
     { name = "rice-agents", editable = "." },
+]
+
+[[package]]
+name = "10-code-review-swarm"
+version = "0.1.0"
+source = { virtual = "examples/10_code_review_swarm" }
+dependencies = [
+    { name = "google-genai" },
+    { name = "python-dotenv" },
+    { name = "rice-agents" },
+    { name = "ricedb" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "google-genai", specifier = ">=1.56.0" },
+    { name = "python-dotenv", specifier = ">=1.2.1" },
+    { name = "rice-agents", editable = "." },
+    { name = "ricedb", specifier = ">=0.1.0" },
 ]
 
 [[package]]

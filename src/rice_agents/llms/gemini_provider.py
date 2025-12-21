@@ -165,11 +165,12 @@ class GeminiProvider(LLMProvider):
 
         usage = {}
         if response.usage_metadata:
-            # Mapping common fields
+            # Mapping common fields, handle potential None values
             usage = {
-                "prompt_tokens": response.usage_metadata.prompt_token_count,
-                "completion_tokens": response.usage_metadata.candidates_token_count,
-                "total_tokens": response.usage_metadata.total_token_count,
+                "prompt_tokens": response.usage_metadata.prompt_token_count or 0,
+                "completion_tokens": response.usage_metadata.candidates_token_count
+                or 0,
+                "total_tokens": response.usage_metadata.total_token_count or 0,
             }
 
         return RiceLLMResponse(

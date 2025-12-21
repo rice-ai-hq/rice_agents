@@ -1,0 +1,3 @@
+[containers.CodeReviewSwarm]
+description = "Container for Code Review Swarm"
+memory = "ricedb"

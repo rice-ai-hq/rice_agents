@@ -87,4 +87,6 @@ members = [
     ".",
     "examples/09_city_logistics_swarm",
     ".",
+    "examples/10_code_review_swarm",
+    ".",
 ]
