@@ -1,4 +1,5 @@
 import inspect
+import uuid
 from typing import Any
 
 from ..llms.base import LLMProvider, ToolCall
@@ -18,6 +19,7 @@ class Agent:
         tools: list[RiceTool] | None = None,
         memory: VectorStore | None = None,
         system_prompt: str = "You are a helpful assistant.",
+        session_id: str | None = None,
     ):
         self.name = name
         self.llm = llm
@@ -26,6 +28,7 @@ class Agent:
         self.system_prompt = system_prompt
         self.history: list[dict[str, Any]] = []
         self.tool_map = {t.name: t for t in self.tools}
+        self.session_id = session_id or str(uuid.uuid4())
 
     async def run(self, task: str) -> str:
         """
@@ -34,6 +37,16 @@ class Agent:
         # RAG Retrieval
         context = ""
         if self.memory:
+            # Scratchpad: Log task start
+            add_scratchpad = getattr(self.memory, "add_scratchpad", None)
+            if add_scratchpad:
+                add_scratchpad(
+                    session_id=self.session_id,
+                    agent=self.name,
+                    content=f"Started task: {task}",
+                    metadata={"type": "task_start"},
+                )
+
             try:
                 results = self.memory.query(task, n_results=3)
                 if results:
@@ -77,6 +90,21 @@ class Agent:
                 # Execute tools
                 for tool_call in response.tool_calls:
                     print(f"[{self.name}] Calling tool: {tool_call.name}")
+
+                    # Scratchpad: Log tool call
+                    add_scratchpad = getattr(self.memory, "add_scratchpad", None)
+                    if self.memory and add_scratchpad:
+                        add_scratchpad(
+                            session_id=self.session_id,
+                            agent=self.name,
+                            content=f"Calling tool: {tool_call.name}",
+                            metadata={
+                                "type": "tool_call",
+                                "tool": tool_call.name,
+                                "args": str(tool_call.args),
+                            },
+                        )
+
                     result = await self._execute_tool(tool_call)
 
                     self.history.append(

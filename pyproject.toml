@@ -2,6 +2,9 @@
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.hatch.metadata]
+allow-direct-references = true
+
 [project]
 name = "rice-agents"
 version = "0.1.1"
@@ -17,6 +20,7 @@ dependencies = [
     "openai>=2.14.0",
     "pydantic>=2.12.5",
     "python-dotenv>=1.2.1",
+    "ricedb[grpc,embeddings] @ git+https://github.com/shankha98/ricedb-python.git@dc507fd24ca897240eea8840db3f43eeb5473bd7",
 ]
 
 [project.urls]
@@ -27,8 +31,8 @@ dev = ["ruff>=0.14.9", "ty>=0.0.3", "pytest>=7.4.0", "pytest-asyncio>=0.23.0"]
 
 # --- Ty Configuration ---
 [tool.ty]
-python-version = "3.11"
-python-platform = "darwin"
+# python-version = "3.11"
+# python-platform = "darwin"
 
 [tool.ty.src]
 include = ["src", "tests", "examples"]
