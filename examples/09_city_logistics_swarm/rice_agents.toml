@@ -6,3 +6,5 @@ auto_memory = false # We will handle memory explicitly via scratchpad for this e
 [containers.SmartCityOps.memory_config]
 host = "localhost"
 user_id = 1
+username = "admin"
+password = "password123"

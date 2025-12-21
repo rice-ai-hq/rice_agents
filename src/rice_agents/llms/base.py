@@ -10,6 +10,7 @@ class ToolCall(BaseModel):
     name: str
     args: dict[str, Any]
     id: str | None = None
+    extra: dict[str, Any] = Field(default_factory=dict)
 
 
 class RiceLLMResponse(BaseModel):

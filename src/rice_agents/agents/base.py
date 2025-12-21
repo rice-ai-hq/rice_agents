@@ -1,6 +1,6 @@
 import inspect
 import uuid
-from typing import Any, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Optional
 
 from ..llms.base import LLMProvider, ToolCall
 from ..memory.base import VectorStore
@@ -96,7 +96,7 @@ class Agent:
                     "role": "assistant",
                     "content": response.content,
                     "tool_calls": [
-                        {"name": t.name, "args": t.args, "id": t.id}
+                        {"name": t.name, "args": t.args, "id": t.id, "extra": t.extra}
                         for t in response.tool_calls
                     ],
                 }

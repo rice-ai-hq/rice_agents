@@ -58,7 +58,11 @@ async def run_drone_mission(agent, drone_id, container):
                 session_id="city_simulation_v1",
                 agent=agent.name,
                 content=f"Moving to {target_node}",
-                metadata={"location": target_node, "step": step, "status": "moving"},
+                metadata={
+                    "location": str(target_node),
+                    "step": str(step),
+                    "status": "moving",
+                },
             )
 
         # Simulate movement time
