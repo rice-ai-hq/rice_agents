@@ -25,6 +25,8 @@ class RiceDBStore(VectorStore):
         host: str = "localhost",
         user_id: int = 1,
         embedding_generator: Any = None,
+        username: str | None = None,
+        password: str | None = None,
     ):
         if RiceDBClient is None:
             raise ImportError(
@@ -35,6 +37,15 @@ class RiceDBStore(VectorStore):
         if not self.client.connect():
             # In a real scenario we might want to retry or fail hard
             logger.warning(f"Failed to connect to RiceDB at {host}")
+
+        if username and password:
+            try:
+                self.client.login(username, password)
+            except Exception as e:
+                # If login fails, maybe user doesn't exist?
+                # In a real app, we might handle registration separately or raise error.
+                # Here we just log it.
+                logger.error(f"Failed to login to RiceDB: {e}")
 
         self.user_id = user_id
 

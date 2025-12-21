@@ -28,7 +28,13 @@ async def main():
     print("Initializing RiceDB Memory...")
     try:
         # Assumes RiceDB server is running on localhost
-        memory = RiceDBStore(host="localhost", user_id=1)
+        # We use default admin/password123 for demonstration
+        memory = RiceDBStore(
+            host="localhost",
+            user_id=1,
+            username="admin",
+            password="password123",
+        )
     except Exception as e:
         print(f"Failed to connect to RiceDB: {e}")
         print(
@@ -48,23 +54,9 @@ async def main():
     # 2. Create Agent with Memory
     # Using a dummy LLM provider if API key is missing for demo purposes, or handle gracefully
     if api_key:
-        llm = GeminiProvider(model="gemini-1.5-flash", api_key=api_key)
+        llm = GeminiProvider(model="gemini-3-flash-preview", api_key=api_key)
     else:
-        print("Using Mock LLM since no API Key provided (for demo structure only)")
-        from unittest.mock import MagicMock
-
-        from rice_agents.llms.base import RiceLLMResponse
-
-        llm = MagicMock()
-
-        async def mock_chat(*args, **kwargs):
-            return RiceLLMResponse(
-                content="I recall the deadline is next Friday.",
-                provider="mock",
-                model="mock",
-            )
-
-        llm.chat.side_effect = mock_chat
+        raise ValueError("GOOGLE_API_KEY is required to run this example.")
 
     agent = Agent(
         name="ProjectBot",
