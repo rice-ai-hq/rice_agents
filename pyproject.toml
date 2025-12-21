@@ -89,4 +89,6 @@ members = [
     ".",
     "examples/10_code_review_swarm",
     ".",
+    "examples/11_adaptive_code_review",
+    ".",
 ]
