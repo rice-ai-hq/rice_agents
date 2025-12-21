@@ -65,7 +65,7 @@ async def main():
 
     setup_sandbox()
 
-    llm = GeminiProvider(model="gemini-1.5-flash", api_key=api_key)
+    llm = GeminiProvider(model="gemini-3-flash-preview", api_key=api_key)
 
     # Create a container for the sandbox
     container = Container("SandboxEnv")

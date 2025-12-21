@@ -36,7 +36,7 @@ async def main():
         print("Please set GOOGLE_API_KEY in .env")
         return
 
-    llm = GeminiProvider(model="gemini-1.5-flash", api_key=api_key)
+    llm = GeminiProvider(model="gemini-3-flash-preview", api_key=api_key)
 
     # 1. Initialize Container
     # This loads config from rice_agents.toml, connecting to RiceDB and enabling auto_memory

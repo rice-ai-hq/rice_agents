@@ -36,7 +36,7 @@ async def main():
     print("Memory populated.")
 
     # 2. Create Agent with Memory
-    llm = GeminiProvider(model="gemini-1.5-flash", api_key=api_key)
+    llm = GeminiProvider(model="gemini-3-flash-preview", api_key=api_key)
 
     container = Container("PersonalContainer")
     agent = Agent(

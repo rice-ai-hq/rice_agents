@@ -1,0 +1,14 @@
+[project]
+name = "09-city-logistics-swarm"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "google-genai>=1.56.0",
+    "python-dotenv>=1.2.1",
+    "rice-agents",
+]
+
+[tool.uv.sources]
+rice-agents = { workspace = true, editable = true }

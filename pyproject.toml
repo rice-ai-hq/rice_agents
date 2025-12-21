@@ -66,3 +66,25 @@ line-ending = "auto"
 asyncio_mode = "auto"
 testpaths = ["tests"]
 python_files = "test_*.py"
+
+[tool.uv.workspace]
+members = [
+    "examples/01_basic_tool",
+    ".",
+    "examples/02_memory_rag",
+    ".",
+    "examples/03_flows",
+    ".",
+    "examples/04_adaptive_swarm",
+    ".",
+    "examples/05_hierarchical_dev_team",
+    ".",
+    "examples/06_interactive_filesystem",
+    ".",
+    "examples/07_ricedb_memory",
+    ".",
+    "examples/08_massive_research_swarm",
+    ".",
+    "examples/09_city_logistics_swarm",
+    ".",
+]
