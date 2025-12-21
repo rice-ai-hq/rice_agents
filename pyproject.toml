@@ -91,4 +91,7 @@ members = [
     ".",
     "examples/11_adaptive_code_review",
     ".",
+    "examples/12_music_processing",
+    ".",
+    ".",
 ]

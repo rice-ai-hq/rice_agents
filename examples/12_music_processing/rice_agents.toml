@@ -1,0 +1,9 @@
+[containers.AudioStudio]
+description = "Container for Audio Processing"
+memory = "ricedb"
+
+[containers.AudioStudio.memory_config]
+host = "localhost"
+user_id = 1
+username = "admin"
+password = "password123"
