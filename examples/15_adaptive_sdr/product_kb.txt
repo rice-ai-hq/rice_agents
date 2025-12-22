@@ -1,0 +1,14 @@
+Rice Agents Platform - Product Knowledge Base
+
+1. **Overview**: Rice Agents is a modular, provider-agnostic framework for building and orchestrating AI agents. It features native support for Containers and RiceDB.
+2. **Key Feature - Containers**: Isolated execution environments for agents, handling dependencies, memory connections, and lifecycle management automatically.
+3. **Key Feature - RiceDB**: A high-performance vector-graph database tailored for AI memory. It supports RAG (Vector Search) and Shared Scratchpad (Ephemeral Memory) for multi-agent coordination.
+4. **Use Cases**: 
+    - Swarm Intelligence: Coordinate 100+ agents efficiently.
+    - Code Review: ingest and analyze large codebases.
+    - SDR Automation: Research leads and personalize outreach at scale.
+5. **Pricing**: Enterprise Custom. Free tier for open source projects.
+6. **Objection Handling**:
+    - "Too expensive": We offer ROI based pricing. The efficiency gains from 100 agents usually pay for the platform in 1 month.
+    - "Hard to implement": Python-native, integrates with existing LLMs (Gemini, OpenAI). 5 minute setup.
+    - "Security": We run in your VPC or on-prem.

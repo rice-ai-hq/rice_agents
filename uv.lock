@@ -22,6 +22,7 @@ members = [
     "12-music-processing",
     "13-remove-drums",
     "14-retrieval-benchmark",
+    "15-adaptive-sdr",
     "rice-agents",
 ]
 
@@ -286,6 +287,25 @@ requires-dist = [
     { name = "google-genai", specifier = ">=1.56.0" },
     { name = "numpy", specifier = ">=2.3.5" },
     { name = "pinecone", specifier = ">=8.0.0" },
+    { name = "python-dotenv", specifier = ">=1.2.1" },
+    { name = "rice-agents", editable = "." },
+    { name = "ricedb", specifier = ">=0.1.0" },
+]
+
+[[package]]
+name = "15-adaptive-sdr"
+version = "0.1.0"
+source = { virtual = "examples/15_adaptive_sdr" }
+dependencies = [
+    { name = "google-genai" },
+    { name = "python-dotenv" },
+    { name = "rice-agents" },
+    { name = "ricedb" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "google-genai", specifier = ">=1.56.0" },
     { name = "python-dotenv", specifier = ">=1.2.1" },
     { name = "rice-agents", editable = "." },
     { name = "ricedb", specifier = ">=0.1.0" },

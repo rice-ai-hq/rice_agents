@@ -1,0 +1,18 @@
+[
+    {
+        "id": "lead_001",
+        "name": "Sarah Connor",
+        "company": "SkyNet Dynamics",
+        "industry": "Robotics & AI",
+        "role": "CTO",
+        "interests": "Automation, Efficiency, Scalaing"
+    },
+    {
+        "id": "lead_002",
+        "name": "Michael Scott",
+        "company": "Dunder Mifflin",
+        "industry": "Paper & Supplies",
+        "role": "Regional Manager",
+        "interests": "People, Management, Cost cutting"
+    }
+]

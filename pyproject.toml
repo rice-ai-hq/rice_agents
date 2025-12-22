@@ -99,4 +99,7 @@ members = [
     "examples/14_retrieval_benchmark",
     ".",
     ".",
+    "examples/15_adaptive_sdr",
+    ".",
+    ".",
 ]

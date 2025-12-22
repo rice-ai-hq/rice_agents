@@ -1,0 +1,9 @@
+[containers.SDRTeam]
+description = "Sales Development Representative Swarm"
+memory = "ricedb"
+
+[containers.SDRTeam.memory_config]
+host = "localhost"
+user_id = 1
+username = "admin"
+password = "password123"
