@@ -19,12 +19,6 @@ members = [
     "09-city-logistics-swarm",
     "10-code-review-swarm",
     "11-adaptive-code-review",
-    "12-music-processing",
-    "13-remove-drums",
-    "14-retrieval-benchmark",
-    "15-adaptive-sdr",
-    "16-complex-config",
-    "17-remote-ricedb",
     "rice-agents",
 ]
 
@@ -216,134 +210,6 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "google-genai", specifier = ">=1.56.0" },
-    { name = "python-dotenv", specifier = ">=1.2.1" },
-    { name = "rice-agents", editable = "." },
-    { name = "ricedb", specifier = ">=0.1.0" },
-]
-
-[[package]]
-name = "12-music-processing"
-version = "0.1.0"
-source = { virtual = "examples/12_music_processing" }
-dependencies = [
-    { name = "google-genai" },
-    { name = "numpy" },
-    { name = "pydub" },
-    { name = "python-dotenv" },
-    { name = "rice-agents" },
-    { name = "ricedb" },
-    { name = "scipy" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "google-genai", specifier = ">=1.56.0" },
-    { name = "numpy", specifier = ">=2.3.5" },
-    { name = "pydub", specifier = ">=0.25.1" },
-    { name = "python-dotenv", specifier = ">=1.2.1" },
-    { name = "rice-agents", editable = "." },
-    { name = "ricedb", specifier = ">=0.1.0" },
-    { name = "scipy", specifier = ">=1.16.3" },
-]
-
-[[package]]
-name = "13-remove-drums"
-version = "0.1.0"
-source = { virtual = "examples/13_remove_drums" }
-dependencies = [
-    { name = "google-genai" },
-    { name = "numpy" },
-    { name = "pydub" },
-    { name = "python-dotenv" },
-    { name = "rice-agents" },
-    { name = "ricedb" },
-    { name = "scipy" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "google-genai", specifier = ">=1.56.0" },
-    { name = "numpy", specifier = ">=2.3.5" },
-    { name = "pydub", specifier = ">=0.25.1" },
-    { name = "python-dotenv", specifier = ">=1.2.1" },
-    { name = "rice-agents", editable = "." },
-    { name = "ricedb", specifier = ">=0.1.0" },
-    { name = "scipy", specifier = ">=1.16.3" },
-]
-
-[[package]]
-name = "14-retrieval-benchmark"
-version = "0.1.0"
-source = { virtual = "examples/14_retrieval_benchmark" }
-dependencies = [
-    { name = "google-genai" },
-    { name = "numpy" },
-    { name = "pinecone" },
-    { name = "python-dotenv" },
-    { name = "rice-agents" },
-    { name = "ricedb" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "google-genai", specifier = ">=1.56.0" },
-    { name = "numpy", specifier = ">=2.3.5" },
-    { name = "pinecone", specifier = ">=8.0.0" },
-    { name = "python-dotenv", specifier = ">=1.2.1" },
-    { name = "rice-agents", editable = "." },
-    { name = "ricedb", specifier = ">=0.1.0" },
-]
-
-[[package]]
-name = "15-adaptive-sdr"
-version = "0.1.0"
-source = { virtual = "examples/15_adaptive_sdr" }
-dependencies = [
-    { name = "google-genai" },
-    { name = "python-dotenv" },
-    { name = "rice-agents" },
-    { name = "ricedb" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "google-genai", specifier = ">=1.56.0" },
-    { name = "python-dotenv", specifier = ">=1.2.1" },
-    { name = "rice-agents", editable = "." },
-    { name = "ricedb", specifier = ">=0.1.0" },
-]
-
-[[package]]
-name = "16-complex-config"
-version = "0.1.0"
-source = { virtual = "examples/16_complex_config" }
-dependencies = [
-    { name = "google-genai" },
-    { name = "python-dotenv" },
-    { name = "rice-agents" },
-    { name = "ricedb" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "google-genai", specifier = ">=1.56.0" },
-    { name = "python-dotenv", specifier = ">=1.2.1" },
-    { name = "rice-agents", editable = "." },
-    { name = "ricedb", specifier = ">=0.1.0" },
-]
-
-[[package]]
-name = "17-remote-ricedb"
-version = "0.1.0"
-source = { virtual = "examples/17_remote_ricedb" }
-dependencies = [
-    { name = "python-dotenv" },
-    { name = "rice-agents" },
-    { name = "ricedb" },
-]
-
-[package.metadata]
-requires-dist = [
     { name = "python-dotenv", specifier = ">=1.2.1" },
     { name = "rice-agents", editable = "." },
     { name = "ricedb", specifier = ">=0.1.0" },
@@ -1726,46 +1592,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pinecone"
-version = "8.0.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "certifi" },
-    { name = "orjson" },
-    { name = "pinecone-plugin-assistant" },
-    { name = "pinecone-plugin-interface" },
-    { name = "python-dateutil" },
-    { name = "typing-extensions" },
-    { name = "urllib3" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/33/13/f4c481a6a93dab92132d6d863b70a0e6c903f62940389435b31cf0c7d7d2/pinecone-8.0.0.tar.gz", hash = "sha256:feca7ff607706c09ffbd127ec93fa3b7110896b30c0d7a57672da73c69698d53", size = 1092653, upload-time = "2025-11-18T18:21:30.584Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/7b/6c/1d870a9211eb8f0bf60214182de001b480f94590eca9d6164a5d6d7de031/pinecone-8.0.0-py3-none-any.whl", hash = "sha256:95f714a496a91d80f3405165aedfea76ca8ac16e51e618df0434241838e353f8", size = 745902, upload-time = "2025-11-18T18:21:25.584Z" },
-]
-
-[[package]]
-name = "pinecone-plugin-assistant"
-version = "3.0.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "packaging" },
-    { name = "requests" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/08/1a/33249870c9e8c774dafc038419b48aa63b380b461e9a1c1cb042db31be49/pinecone_plugin_assistant-3.0.1.tar.gz", hash = "sha256:6b00e94ef1bf55ed601d2316ee6f71f96f93bf2155277a826638395e1090dde3", size = 152060, upload-time = "2025-11-11T07:45:07.224Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/06/88/4b801675b4d58c5f8acd96bfd4847e6d7bc1a93ee4ff916e913dd6bda2de/pinecone_plugin_assistant-3.0.1-py3-none-any.whl", hash = "sha256:cd86ca5c98137221170e90fe81e03bbe71999992096da68c77f4af3503017622", size = 280865, upload-time = "2025-11-11T07:45:06.055Z" },
-]
-
-[[package]]
-name = "pinecone-plugin-interface"
-version = "0.0.7"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/f4/fb/e8a4063264953ead9e2b24d9b390152c60f042c951c47f4592e9996e57ff/pinecone_plugin_interface-0.0.7.tar.gz", hash = "sha256:b8e6675e41847333aa13923cc44daa3f85676d7157324682dc1640588a982846", size = 3370, upload-time = "2024-06-05T01:57:52.093Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/3b/1d/a21fdfcd6d022cb64cef5c2a29ee6691c6c103c4566b41646b080b7536a5/pinecone_plugin_interface-0.0.7-py3-none-any.whl", hash = "sha256:875857ad9c9fc8bbc074dbe780d187a2afd21f5bfe0f3b08601924a61ef1bba8", size = 6249, upload-time = "2024-06-05T01:57:50.583Z" },
-]
-
-[[package]]
 name = "pluggy"
 version = "1.6.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2028,15 +1854,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/aa/81/05e400037eaf55ad400bcd318c05bb345b57e708887f07ddb2d20e3f0e98/pydantic_core-2.41.5-graalpy312-graalpy250_312_native-macosx_11_0_arm64.whl", hash = "sha256:aabf5777b5c8ca26f7824cb4a120a740c9588ed58df9b2d196ce92fba42ff8dc", size = 1915388, upload-time = "2025-11-04T13:42:52.215Z" },
     { url = "https://files.pythonhosted.org/packages/6e/0d/e3549b2399f71d56476b77dbf3cf8937cec5cd70536bdc0e374a421d0599/pydantic_core-2.41.5-graalpy312-graalpy250_312_native-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:c007fe8a43d43b3969e8469004e9845944f1a80e6acd47c150856bb87f230c56", size = 1942879, upload-time = "2025-11-04T13:42:56.483Z" },
     { url = "https://files.pythonhosted.org/packages/f7/07/34573da085946b6a313d7c42f82f16e8920bfd730665de2d11c0c37a74b5/pydantic_core-2.41.5-graalpy312-graalpy250_312_native-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:76d0819de158cd855d1cbb8fcafdf6f5cf1eb8e470abe056d5d161106e38062b", size = 2139017, upload-time = "2025-11-04T13:42:59.471Z" },
-]
-
-[[package]]
-name = "pydub"
-version = "0.25.1"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/fe/9a/e6bca0eed82db26562c73b5076539a4a08d3cffd19c3cc5913a3e61145fd/pydub-0.25.1.tar.gz", hash = "sha256:980a33ce9949cab2a569606b65674d748ecbca4f0796887fd6f46173a7b0d30f", size = 38326, upload-time = "2021-03-10T02:09:54.659Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/a6/53/d78dc063216e62fc55f6b2eebb447f6a4b0a59f55c8406376f76bf959b08/pydub-0.25.1-py2.py3-none-any.whl", hash = "sha256:65617e33033874b59d87db603aa1ed450633288aefead953b30bded59cb599a6", size = 32327, upload-time = "2021-03-10T02:09:53.503Z" },
 ]
 
 [[package]]
