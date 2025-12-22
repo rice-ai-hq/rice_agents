@@ -100,7 +100,7 @@ members = [
     "examples/14_retrieval_benchmark",
     ".",
     ".",
-    "examples/15_adaptive_sdr",
+    "examples/13_adaptive_sdr",
     ".",
     ".",
     "examples/16_complex_config",

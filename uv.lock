@@ -19,6 +19,7 @@ members = [
     "09-city-logistics-swarm",
     "10-code-review-swarm",
     "11-adaptive-code-review",
+    "15-adaptive-sdr",
     "rice-agents",
 ]
 
@@ -200,6 +201,25 @@ requires-dist = [
 name = "11-adaptive-code-review"
 version = "0.1.0"
 source = { virtual = "examples/11_adaptive_code_review" }
+dependencies = [
+    { name = "google-genai" },
+    { name = "python-dotenv" },
+    { name = "rice-agents" },
+    { name = "ricedb" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "google-genai", specifier = ">=1.56.0" },
+    { name = "python-dotenv", specifier = ">=1.2.1" },
+    { name = "rice-agents", editable = "." },
+    { name = "ricedb", specifier = ">=0.1.0" },
+]
+
+[[package]]
+name = "15-adaptive-sdr"
+version = "0.1.0"
+source = { virtual = "examples/13_adaptive_sdr" }
 dependencies = [
     { name = "google-genai" },
     { name = "python-dotenv" },
