@@ -96,4 +96,7 @@ members = [
     ".",
     "examples/13_remove_drums",
     ".",
+    "examples/14_retrieval_benchmark",
+    ".",
+    ".",
 ]
