@@ -23,6 +23,8 @@ members = [
     "13-remove-drums",
     "14-retrieval-benchmark",
     "15-adaptive-sdr",
+    "16-complex-config",
+    "17-remote-ricedb",
     "rice-agents",
 ]
 
@@ -306,6 +308,42 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "google-genai", specifier = ">=1.56.0" },
+    { name = "python-dotenv", specifier = ">=1.2.1" },
+    { name = "rice-agents", editable = "." },
+    { name = "ricedb", specifier = ">=0.1.0" },
+]
+
+[[package]]
+name = "16-complex-config"
+version = "0.1.0"
+source = { virtual = "examples/16_complex_config" }
+dependencies = [
+    { name = "google-genai" },
+    { name = "python-dotenv" },
+    { name = "rice-agents" },
+    { name = "ricedb" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "google-genai", specifier = ">=1.56.0" },
+    { name = "python-dotenv", specifier = ">=1.2.1" },
+    { name = "rice-agents", editable = "." },
+    { name = "ricedb", specifier = ">=0.1.0" },
+]
+
+[[package]]
+name = "17-remote-ricedb"
+version = "0.1.0"
+source = { virtual = "examples/17_remote_ricedb" }
+dependencies = [
+    { name = "python-dotenv" },
+    { name = "rice-agents" },
+    { name = "ricedb" },
+]
+
+[package.metadata]
+requires-dist = [
     { name = "python-dotenv", specifier = ">=1.2.1" },
     { name = "rice-agents", editable = "." },
     { name = "ricedb", specifier = ">=0.1.0" },

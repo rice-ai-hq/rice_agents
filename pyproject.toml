@@ -102,4 +102,8 @@ members = [
     "examples/15_adaptive_sdr",
     ".",
     ".",
+    "examples/16_complex_config",
+    ".",
+    "examples/17_remote_ricedb",
+    ".",
 ]

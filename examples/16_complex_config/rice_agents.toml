@@ -1,0 +1,78 @@
+[default_container]
+llm_provider = "gemini"
+model = "gemini-1.5-flash"
+memory = "ricedb"
+auto_memory = false
+
+[default_container.memory_config]
+host = "localhost"
+port = 50051
+
+# --- Engineering Teams ---
+
+[containers.FrontendTeam]
+description = "Handles UI/UX and client-side logic"
+model = "gemini-3-flash-preview"
+auto_memory = true
+[containers.FrontendTeam.env]
+NODE_ENV = "production"
+FRAMEWORK = "Next.js"
+
+[containers.BackendTeam]
+description = "Handles API and Database"
+memory = "postgres_pgvector"             # Hypothetical
+[containers.BackendTeam.memory_config]
+connection_string = "postgresql://user:pass@db:5432/vectors"
+table = "embeddings"
+
+[containers.DevOps]
+description = "Infrastructure and CI/CD"
+model = "claude-3-opus"                  # Hypothetical
+[containers.DevOps.tools]
+allowed = ["kubectl", "terraform", "aws"]
+require_approval = true
+
+# --- Research & Analytics ---
+
+[containers.DataScience]
+description = "Python heavy analytics"
+auto_memory = true
+[containers.DataScience.resources]
+gpu_limit = "1"
+memory_limit = "16GB"
+
+[containers.MarketResearch]
+description = "Web scraping and summarization"
+memory = "chromadb"
+[containers.MarketResearch.memory_config]
+path = "./market_db"
+
+# --- Security & Compliance ---
+
+[containers.RedTeam]
+description = "Adversarial testing"
+auto_memory = true
+[containers.RedTeam.policies]
+logging_level = "DEBUG"
+audit_trail = "enabled"
+
+[containers.Legal]
+description = "Contract review"
+model = "gpt-4-turbo"
+[containers.Legal.memory_config]
+encryption = "AES-256"
+
+# --- Edge Cases ---
+
+[containers.LegacySystem]
+description = "Mainframe interface"
+llm_provider = "local-llama"
+model = "llama-2-7b"
+[containers.LegacySystem.network]
+allow_internet = false
+
+[containers.Experimental]
+description = "Testing new features"
+model = "gemini-ultra-preview"
+auto_memory = true
+experimental_features = ["streaming", "multimodal", "tools_v2"]

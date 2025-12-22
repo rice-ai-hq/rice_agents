@@ -1,0 +1,9 @@
+[default_container]
+description = "Remote RiceDB Test Container"
+memory = "ricedb"
+
+[default_container.memory_config]
+host = "34.39.89.94"
+user_id = 1
+username = "admin"
+password = "password123"
