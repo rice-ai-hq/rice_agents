@@ -2,23 +2,66 @@
 
 ## Installation
 
-Rice Agents requires Python 3.11 or later. We recommend using `uv` for package management.
+Rice Agents requires Python 3.11 or later. We recommend using [uv](https://docs.astral.sh/uv/) for package management.
+
+### Installing uv
+
+If you don't have uv installed:
 
 ```bash
-# Install package
-pip install rice-agents
+# macOS/Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Or with uv
-uv pip install rice-agents
+# Or via Homebrew
+brew install uv
 ```
 
-### Dependencies
+### Install Rice Agents
 
-To use certain features, you may need extra dependencies:
+> **Note:** Rice Agents is not yet published to PyPI. Install directly from GitHub.
 
-- **RiceDB Integration**: `pip install "rice-agents[ricedb]"`
-- **Gemini**: `pip install google-genai`
-- **OpenAI**: `pip install openai`
+Add to your `pyproject.toml`:
+
+```toml
+[project]
+name = "my-agent-project"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "rice-agents @ git+https://github.com/shankha98/rice_agents.git",
+]
+```
+
+Then run:
+
+```bash
+uv sync
+```
+
+Or install directly with pip:
+
+```bash
+pip install git+https://github.com/shankha98/rice_agents.git
+```
+
+### Optional Dependencies
+
+Rice Agents includes all core dependencies. For additional features:
+
+```bash
+# RiceDB with gRPC support (recommended for performance)
+uv add "ricedb[grpc]"
+
+# RiceDB with embedding generators
+uv add "ricedb[embeddings]"  # Sentence Transformers
+uv add "ricedb[openai]"      # OpenAI embeddings
+uv add "ricedb[all]"         # All features
+
+# Additional LLM providers (if needed)
+uv add google-genai  # Gemini
+uv add openai        # OpenAI
+uv add anthropic     # Anthropic
+```
 
 ## Your First Agent
 

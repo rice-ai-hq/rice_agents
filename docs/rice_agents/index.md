@@ -4,18 +4,28 @@ Welcome to **Rice Agents**, a modular, provider-agnostic framework for building 
 
 ## Key Features
 
-- **🧩 Modular Architecture**: Decoupled Agents, Tools, LLM Providers, and Memory.
-- **📦 Container System**: Define execution environments, configuration, and shared resources in `rice_agents.toml`.
-- **🧠 RiceDB Integration**: First-class support for **RiceDB** (Vector-Graph Database) for persistent RAG memory and ephemeral Agent Scratchpads.
-- **🌊 Flows & Swarms**: Patterns for Sequential, Parallel, Hierarchical, and Adaptive multi-agent orchestration.
-- **🛠️ Tooling**: Type-safe tool definitions with Pydantic support.
+- **Modular Architecture**: Decoupled Agents, Tools, LLM Providers, and Memory.
+- **Container System**: Define execution environments, configuration, and shared resources in `rice_agents.toml`.
+- **RiceDB Integration**: First-class support for [RiceDB](https://github.com/shankha98/ricedb-python) (Vector-Graph Database) combining vector search, graph traversal, and native agent memory.
+- **Flows & Swarms**: Patterns for Sequential, Parallel, Hierarchical, and Adaptive multi-agent orchestration.
+- **Tooling**: Type-safe tool definitions with Pydantic support and automatic schema generation.
+
+### Why RiceDB for Multi-Agent Systems?
+
+| Challenge                         | RiceDB Solution                                        |
+| --------------------------------- | ------------------------------------------------------ |
+| Agents need semantic search       | HNSW-based vector index with SIMD optimizations        |
+| Multiple agents need coordination | Native Agent Memory (scratchpad) for real-time sharing |
+| Knowledge has relationships       | Integrated Graph Database for semantic linking         |
+| Multi-tenant environments         | Bitmap-based ACL for zero-latency permission checks    |
+| High-frequency updates            | LSM-tree storage with Write-Ahead Log (WAL)            |
 
 ## Documentation Structure
 
 1.  [Getting Started](getting_started.md): Installation and your first agent.
 2.  [Core Concepts](concepts.md): Agents, Tools, LLMs, and Orchestration.
 3.  [Containers & Configuration](containers.md): Managing environments with `rice_agents.toml` and the `Container` class.
-4.  [RiceDB Integration](ricedb_integration.md): RAG, Memory, and Shared Scratchpad.
+4.  [RiceDB Integration](ricedb_integration.md): RAG, Memory, Graph-RAG, and Agent Scratchpad.
 5.  [Complex Patterns](complex_patterns.md): Building Swarms, Event-Driven Systems, and Adaptive Architectures.
 
 ## Quick Example
