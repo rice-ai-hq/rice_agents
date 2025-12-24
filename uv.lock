@@ -19,6 +19,7 @@ members = [
     "09-city-logistics-swarm",
     "10-code-review-swarm",
     "11-adaptive-code-review",
+    "14-retrieval-benchmark",
     "15-adaptive-sdr",
     "rice-agents",
 ]
@@ -211,6 +212,29 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "google-genai", specifier = ">=1.56.0" },
+    { name = "python-dotenv", specifier = ">=1.2.1" },
+    { name = "rice-agents", editable = "." },
+    { name = "ricedb", specifier = ">=0.1.0" },
+]
+
+[[package]]
+name = "14-retrieval-benchmark"
+version = "0.1.0"
+source = { virtual = "examples/12_retrieval_benchmark" }
+dependencies = [
+    { name = "google-genai" },
+    { name = "numpy" },
+    { name = "pinecone" },
+    { name = "python-dotenv" },
+    { name = "rice-agents" },
+    { name = "ricedb" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "google-genai", specifier = ">=1.56.0" },
+    { name = "numpy", specifier = ">=2.3.5" },
+    { name = "pinecone", specifier = ">=8.0.0" },
     { name = "python-dotenv", specifier = ">=1.2.1" },
     { name = "rice-agents", editable = "." },
     { name = "ricedb", specifier = ">=0.1.0" },
@@ -1612,6 +1636,46 @@ wheels = [
 ]
 
 [[package]]
+name = "pinecone"
+version = "8.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "certifi" },
+    { name = "orjson" },
+    { name = "pinecone-plugin-assistant" },
+    { name = "pinecone-plugin-interface" },
+    { name = "python-dateutil" },
+    { name = "typing-extensions" },
+    { name = "urllib3" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/33/13/f4c481a6a93dab92132d6d863b70a0e6c903f62940389435b31cf0c7d7d2/pinecone-8.0.0.tar.gz", hash = "sha256:feca7ff607706c09ffbd127ec93fa3b7110896b30c0d7a57672da73c69698d53", size = 1092653, upload-time = "2025-11-18T18:21:30.584Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7b/6c/1d870a9211eb8f0bf60214182de001b480f94590eca9d6164a5d6d7de031/pinecone-8.0.0-py3-none-any.whl", hash = "sha256:95f714a496a91d80f3405165aedfea76ca8ac16e51e618df0434241838e353f8", size = 745902, upload-time = "2025-11-18T18:21:25.584Z" },
+]
+
+[[package]]
+name = "pinecone-plugin-assistant"
+version = "3.0.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "packaging" },
+    { name = "requests" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/08/1a/33249870c9e8c774dafc038419b48aa63b380b461e9a1c1cb042db31be49/pinecone_plugin_assistant-3.0.1.tar.gz", hash = "sha256:6b00e94ef1bf55ed601d2316ee6f71f96f93bf2155277a826638395e1090dde3", size = 152060, upload-time = "2025-11-11T07:45:07.224Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/06/88/4b801675b4d58c5f8acd96bfd4847e6d7bc1a93ee4ff916e913dd6bda2de/pinecone_plugin_assistant-3.0.1-py3-none-any.whl", hash = "sha256:cd86ca5c98137221170e90fe81e03bbe71999992096da68c77f4af3503017622", size = 280865, upload-time = "2025-11-11T07:45:06.055Z" },
+]
+
+[[package]]
+name = "pinecone-plugin-interface"
+version = "0.0.7"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/f4/fb/e8a4063264953ead9e2b24d9b390152c60f042c951c47f4592e9996e57ff/pinecone_plugin_interface-0.0.7.tar.gz", hash = "sha256:b8e6675e41847333aa13923cc44daa3f85676d7157324682dc1640588a982846", size = 3370, upload-time = "2024-06-05T01:57:52.093Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3b/1d/a21fdfcd6d022cb64cef5c2a29ee6691c6c103c4566b41646b080b7536a5/pinecone_plugin_interface-0.0.7-py3-none-any.whl", hash = "sha256:875857ad9c9fc8bbc074dbe780d187a2afd21f5bfe0f3b08601924a61ef1bba8", size = 6249, upload-time = "2024-06-05T01:57:50.583Z" },
+]
+
+[[package]]
 name = "pluggy"
 version = "1.6.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2157,7 +2221,7 @@ requires-dist = [
     { name = "openai", specifier = ">=2.14.0" },
     { name = "pydantic", specifier = ">=2.12.5" },
     { name = "python-dotenv", specifier = ">=1.2.1" },
-    { name = "ricedb", extras = ["grpc", "embeddings"], git = "https://github.com/shankha98/ricedb-python.git?rev=dc507fd24ca897240eea8840db3f43eeb5473bd7" },
+    { name = "ricedb", extras = ["grpc", "embeddings"], git = "https://github.com/shankha98/ricedb-python.git?rev=0589e8ac1ee356c503d3231ca6804faf7abbe104" },
 ]
 
 [package.metadata.requires-dev]
@@ -2171,7 +2235,7 @@ dev = [
 [[package]]
 name = "ricedb"
 version = "0.1.0"
-source = { git = "https://github.com/shankha98/ricedb-python.git?rev=dc507fd24ca897240eea8840db3f43eeb5473bd7#dc507fd24ca897240eea8840db3f43eeb5473bd7" }
+source = { git = "https://github.com/shankha98/ricedb-python.git?rev=0589e8ac1ee356c503d3231ca6804faf7abbe104#0589e8ac1ee356c503d3231ca6804faf7abbe104" }
 dependencies = [
     { name = "numpy" },
     { name = "requests" },

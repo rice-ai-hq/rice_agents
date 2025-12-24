@@ -21,7 +21,7 @@ dependencies = [
     "openai>=2.14.0",
     "pydantic>=2.12.5",
     "python-dotenv>=1.2.1",
-    "ricedb[grpc,embeddings] @ git+https://github.com/shankha98/ricedb-python.git@dc507fd24ca897240eea8840db3f43eeb5473bd7",
+    "ricedb[grpc,embeddings] @ git+https://github.com/shankha98/ricedb-python.git@0589e8ac1ee356c503d3231ca6804faf7abbe104",
 ]
 
 [project.urls]
@@ -92,12 +92,7 @@ members = [
     ".",
     "examples/11_adaptive_code_review",
     ".",
-    "examples/12_music_processing",
-    ".",
-    ".",
-    "examples/13_remove_drums",
-    ".",
-    "examples/14_retrieval_benchmark",
+    "examples/12_retrieval_benchmark",
     ".",
     ".",
     "examples/13_adaptive_sdr",

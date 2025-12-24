@@ -4,7 +4,7 @@ import time
 import numpy as np
 from dotenv import load_dotenv
 from pinecone import Pinecone, ServerlessSpec
-from ricedb import RiceDBClient
+from ricedb.client.grpc_client import GrpcRiceDBClient
 
 load_dotenv()
 
@@ -34,17 +34,28 @@ def generate_dataset(size, dim):
 
 def benchmark_ricedb(dataset):
     print("\n--- Benchmarking RiceDB ---")
-    client = RiceDBClient("localhost")
-    if not client.connect():
-        print("Failed to connect to RiceDB")
+
+    HOST = os.environ.get("RICEDB_HOST", "grpc.ricedb-test-2.ricedb.tryrice.com")
+    PORT = int(os.environ.get("RICEDB_PORT", "80"))
+    PASSWORD = os.environ.get("RICEDB_PASSWORD", "997f8f09f8c2affd90ffce58be912e4d")
+    SSL = os.environ.get("RICEDB_SSL", "false").lower() == "true"
+
+    print(f"Connecting to {HOST}:{PORT} (SSL={SSL})...")
+    client = GrpcRiceDBClient(host=HOST, port=PORT)
+    client.ssl = SSL
+
+    try:
+        client.connect()
+    except Exception as e:
+        print(f"Failed to connect to RiceDB: {e}")
         return None, None
 
     # Auth
-    try:  # noqa: SIM105
-        client.register("admin", "password123")
-    except Exception:
-        pass
-    client.login("admin", "password123")
+    try:
+        client.login("admin", PASSWORD)
+    except Exception as e:
+        print(f"Login failed: {e}")
+        return None, None
 
     # Ingest
     print(f"Ingesting {len(dataset)} items...")
