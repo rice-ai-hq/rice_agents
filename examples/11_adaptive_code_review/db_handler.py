@@ -6,13 +6,13 @@ from typing import List, Dict, Optional, Any
 import logging
 
 try:
-    from ricedb import RiceDBClient
+    from ricedb.client.grpc_client import GrpcRiceDBClient
     from ricedb.utils import (
         DummyEmbeddingGenerator,
         SentenceTransformersEmbeddingGenerator,
     )
 except ImportError:
-    RiceDBClient = None
+    GrpcRiceDBClient = None
     DummyEmbeddingGenerator = None
     SentenceTransformersEmbeddingGenerator = None
 
@@ -27,16 +27,26 @@ class SwarmRiceDBHandler:
         username: str = "admin",
         password: str = "password123",
     ):
-        if RiceDBClient is None:
+        if GrpcRiceDBClient is None:
             raise ImportError("RiceDB not installed")
 
-        self.client = RiceDBClient(host)
-        if not self.client.connect():
-            logger.warning(f"Failed to connect to RiceDB at {host}")
+        # Remote connection settings
+        HOST = os.environ.get("RICEDB_HOST", "grpc.ricedb-test-2.ricedb.tryrice.com")
+        PORT = int(os.environ.get("RICEDB_PORT", "80"))
+        PASSWORD = os.environ.get("RICEDB_PASSWORD", "997f8f09f8c2affd90ffce58be912e4d")
+        SSL = os.environ.get("RICEDB_SSL", "false").lower() == "true"
+
+        self.client = GrpcRiceDBClient(host=HOST, port=PORT)
+        self.client.ssl = SSL
+
+        try:
+            self.client.connect()
+        except Exception as e:
+            logger.warning(f"Failed to connect to RiceDB at {HOST}:{PORT}: {e}")
 
         # Auth
         try:
-            self.client.login(username, password)
+            self.client.login("admin", PASSWORD)
         except Exception as e:
             logger.warning(f"Login failed: {e}")
 
