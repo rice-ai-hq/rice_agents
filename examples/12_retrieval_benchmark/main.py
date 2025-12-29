@@ -3,7 +3,7 @@ import time
 
 from dotenv import load_dotenv
 from pinecone import Pinecone
-from ricedb.client.grpc_client import GrpcRiceDBClient
+from ricedb import RiceDBClient
 
 load_dotenv()
 
@@ -38,7 +38,7 @@ def benchmark_ricedb(dataset):
     SSL = os.environ.get("RICEDB_SSL", "false").lower() == "true"
 
     print(f"Connecting to {HOST}:{PORT} (SSL={SSL})...")
-    client = GrpcRiceDBClient(host=HOST, port=PORT)
+    client = RiceDBClient(HOST, port=PORT)
     client.ssl = SSL
 
     try:

@@ -4,6 +4,8 @@ auto_memory = true
 
 [containers.ProjectContainer.memory_config]
 host = "localhost"
+port = 50051
+ssl = false
 user_id = 1
 username = "admin"
-password = "password123"
+password = "admin"

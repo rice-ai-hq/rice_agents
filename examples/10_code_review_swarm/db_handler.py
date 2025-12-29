@@ -9,9 +9,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 try:
-    from ricedb.client.grpc_client import GrpcRiceDBClient
+    from ricedb import RiceDBClient
 except ImportError:
-    GrpcRiceDBClient = None
+    RiceDBClient = None
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +24,7 @@ class SwarmRiceDBHandler:
         username: str = "admin",
         password: str = "password123",
     ):
-        if GrpcRiceDBClient is None:
+        if RiceDBClient is None:
             raise ImportError("RiceDB not installed")
 
         # Remote connection settings from environment
@@ -33,7 +33,8 @@ class SwarmRiceDBHandler:
         PASSWORD = os.environ.get("RICEDB_PASSWORD", password)
         SSL = os.environ.get("RICEDB_SSL", "false").lower() == "true"
 
-        self.client = GrpcRiceDBClient(host=HOST, port=PORT)
+        # Initialize client (auto-detects transport)
+        self.client = RiceDBClient(HOST, port=PORT)
         self.client.ssl = SSL
 
         try:

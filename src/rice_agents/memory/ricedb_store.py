@@ -8,10 +8,8 @@ logger = logging.getLogger(__name__)
 
 try:
     from ricedb import RiceDBClient
-    from ricedb.utils import DummyEmbeddingGenerator
 except ImportError:
     RiceDBClient: Any = None
-    DummyEmbeddingGenerator: Any = None
 
 
 class RiceDBStore(VectorStore):
@@ -24,16 +22,17 @@ class RiceDBStore(VectorStore):
         self,
         host: str = "localhost",
         user_id: int = 1,
-        embedding_generator: Any = None,
         username: str | None = None,
         password: str | None = None,
+        **kwargs,
     ):
         if RiceDBClient is None:
             raise ImportError(
                 "RiceDB is not installed. Please install it with `pip install ricedb`."
             )
 
-        self.client = RiceDBClient(host)
+        # Initialize client (auto-detects transport)
+        self.client = RiceDBClient(host, **kwargs)
         if not self.client.connect():
             # In a real scenario we might want to retry or fail hard
             logger.warning(f"Failed to connect to RiceDB at {host}")
@@ -48,14 +47,6 @@ class RiceDBStore(VectorStore):
                 logger.error(f"Failed to login to RiceDB: {e}")
 
         self.user_id = user_id
-
-        # Use provided generator or dummy one
-        if embedding_generator:
-            self.embedding_generator = embedding_generator
-        elif DummyEmbeddingGenerator:
-            self.embedding_generator = DummyEmbeddingGenerator()
-        else:
-            self.embedding_generator = None
 
     def add_texts(
         self,
@@ -76,6 +67,9 @@ class RiceDBStore(VectorStore):
             metadatas = [{} for _ in texts]
 
         for i, text in enumerate(texts):
+            # Ensure text is stored in metadata for retrieval
+            if "text" not in metadatas[i]:
+                metadatas[i]["text"] = text
             # RiceDB expects integer node_id.
             # We try to convert the ID to int if possible, otherwise hash it.
             try:
@@ -85,11 +79,10 @@ class RiceDBStore(VectorStore):
                 node_id = abs(hash(ids[i])) % (10**9)
 
             try:
-                self.client.insert_text(
+                self.client.insert(
                     node_id=node_id,
                     text=text,
                     metadata=metadatas[i],
-                    embedding_generator=self.embedding_generator,
                     user_id=self.user_id,
                 )
             except Exception as e:
@@ -100,20 +93,21 @@ class RiceDBStore(VectorStore):
         Query RiceDB for similar texts.
         """
         try:
-            results = self.client.search_text(
+            results = self.client.search(
                 query=query,
-                embedding_generator=self.embedding_generator,
                 user_id=self.user_id,
                 k=n_results,
             )
 
             # Extract text from results
-            # RiceDB results usually contain 'metadata' with 'text' if inserted via insert_text
+
             texts = []
             for res in results:
                 metadata = res.get("metadata", {})
                 if "text" in metadata:
                     texts.append(metadata["text"])
+                elif "stored_text" in metadata:
+                    texts.append(metadata["stored_text"])
 
             return texts
 

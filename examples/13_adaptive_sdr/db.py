@@ -2,7 +2,7 @@ import contextlib
 import os
 
 from dotenv import load_dotenv
-from ricedb.client.grpc_client import GrpcRiceDBClient
+from ricedb import RiceDBClient
 
 load_dotenv()
 
@@ -15,7 +15,8 @@ class RiceDBHandler:
         PASSWORD = os.environ.get("RICEDB_PASSWORD", "password123")
         SSL = os.environ.get("RICEDB_SSL", "false").lower() == "true"
 
-        self.client = GrpcRiceDBClient(host=HOST, port=PORT)
+        # Initialize client (auto-detects transport)
+        self.client = RiceDBClient(HOST, port=PORT)
         self.client.ssl = SSL
 
         try:
