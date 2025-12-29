@@ -1,35 +1,28 @@
 import os
 import time
 
-import numpy as np
 from dotenv import load_dotenv
-from pinecone import Pinecone, ServerlessSpec
+from pinecone import Pinecone
 from ricedb.client.grpc_client import GrpcRiceDBClient
 
 load_dotenv()
 
 # Configuration
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-INDEX_NAME = "quickstart"
+INDEX_NAME = "demo"  # Index with integrated llama-text-embed-v2
 DATASET_SIZE = 1000
 QUERY_COUNT = 20
 
 
-def generate_dataset(size, dim):
-    """Generate dataset with text for RiceDB and vectors for Pinecone."""
-    print(f"Generating {size} documents (with {dim}-dim vectors for Pinecone)...")
+def generate_dataset(size):
+    """Generate dataset with text documents for both RiceDB and Pinecone."""
+    print(f"Generating {size} text documents...")
     dataset = []
     for i in range(size):
-        # Random vector normalized (only needed for Pinecone)
-        vec = np.random.rand(dim).astype(np.float32)
-        vec = vec / np.linalg.norm(vec)
         dataset.append(
             {
-                "id": f"vec_{i}",
-                "values": vec.tolist(),  # Only used by Pinecone
-                "metadata": {
-                    "text": f"Document {i} about machine learning, neural networks, and AI research benchmarks."
-                },
+                "id": f"doc_{i}",
+                "text": f"Document {i} about machine learning, neural networks, and AI research benchmarks.",
             }
         )
     return dataset
@@ -71,7 +64,7 @@ def benchmark_ricedb(dataset):
         batch_docs.append(
             {
                 "id": i + 100000,  # Offset to avoid collision with other demos
-                "text": item["metadata"]["text"],
+                "text": item["text"],
                 "metadata": {"title": f"Document {i}"},
                 "user_id": 1,
             }
@@ -96,7 +89,7 @@ def benchmark_ricedb(dataset):
     print(f"Running {QUERY_COUNT} queries...")
     start_time = time.time()
     for i in range(QUERY_COUNT):
-        query_text = dataset[i]["metadata"]["text"]
+        query_text = dataset[i]["text"]
         client.search(query_text, user_id=1, k=10)
     query_time = time.time() - start_time
     avg_query = query_time / QUERY_COUNT
@@ -106,8 +99,8 @@ def benchmark_ricedb(dataset):
     return ingest_time, avg_query
 
 
-def benchmark_pinecone(dataset, dim):
-    """Benchmark Pinecone using pre-computed vector embeddings."""
+def benchmark_pinecone(dataset):
+    """Benchmark Pinecone using integrated embeddings (text-only, server handles embedding)."""
     print("\n--- Benchmarking Pinecone ---")
     try:
         pc = Pinecone(api_key=PINECONE_API_KEY)
@@ -116,25 +109,29 @@ def benchmark_pinecone(dataset, dim):
         print(f"Pinecone Connection Error: {e}")
         return None, None
 
-    # Ingest
-    print(f"Ingesting {len(dataset)} items...")
+    # Ingest using text (Pinecone handles embedding via llama-text-embed-v2)
+    print(f"Ingesting {len(dataset)} items (text-only, server handles embedding)...")
     start_time = time.time()
 
-    # Pinecone upsert batches of 100
-    batch_size = 100
+    # Pinecone upsert_records has a batch size limit of 96
+    batch_size = 96
     for i in range(0, len(dataset), batch_size):
         batch = dataset[i : i + batch_size]
-        index.upsert(vectors=batch)
+        # Use upsert_records for integrated embedding
+        records = [{"_id": item["id"], "text": item["text"]} for item in batch]
+        index.upsert_records(namespace="benchmark", records=records)
 
     ingest_time = time.time() - start_time
     print(f"Pinecone Ingestion Time: {ingest_time:.4f}s")
 
-    # Query
+    # Query using text
     print(f"Running {QUERY_COUNT} queries...")
     start_time = time.time()
     for i in range(QUERY_COUNT):
-        query_vec = dataset[i]["values"]
-        index.query(vector=query_vec, top_k=10)
+        query_text = dataset[i]["text"]
+        index.search(
+            namespace="benchmark", query={"top_k": 10, "inputs": {"text": query_text}}
+        )
     query_time = time.time() - start_time
     avg_query = query_time / QUERY_COUNT
     print(f"Pinecone Total Query Time: {query_time:.4f}s")
@@ -144,30 +141,24 @@ def benchmark_pinecone(dataset, dim):
 
 
 def main():
-    # 1. Determine dimension from Pinecone index to match it
+    # 1. Verify Pinecone index exists
     print("Checking Pinecone Index...")
-    dim = 384  # Default for benchmark
     try:
         pc = Pinecone(api_key=PINECONE_API_KEY)
-        try:
-            idx_desc = pc.describe_index(INDEX_NAME)
-            dim = idx_desc.dimension
-            print(f"Detected Pinecone Index Dimension: {dim}")
-        except Exception:
-            raise Exception(  # noqa: B904
-                "Failed to describe Pinecone index. Ensure the index exists."
-            )
-
+        idx_desc = pc.describe_index(INDEX_NAME)
+        print(
+            f"Using Pinecone Index: {INDEX_NAME} (dim={idx_desc.dimension}, model=llama-text-embed-v2)"
+        )
     except Exception as e:
         print(f"Error accessing Pinecone: {e}")
         return
 
-    # 2. Generate Data
-    dataset = generate_dataset(DATASET_SIZE, dim)
+    # 2. Generate Data (text-only, no vectors needed)
+    dataset = generate_dataset(DATASET_SIZE)
 
     # 3. Benchmark
     r_ingest, r_query = benchmark_ricedb(dataset)
-    p_ingest, p_query = benchmark_pinecone(dataset, dim)
+    p_ingest, p_query = benchmark_pinecone(dataset)
 
     print("\n=== RESULTS ===")
     print(f"{'Metric':<20} | {'RiceDB':<15} | {'Pinecone':<15}")
