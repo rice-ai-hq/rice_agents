@@ -1,0 +1,11 @@
+[containers.AdvancedPatterns]
+description = "Container for Advanced RiceDB Patterns"
+memory = "ricedb"
+
+[containers.AdvancedPatterns.memory_config]
+host = "localhost"
+port = 50051
+ssl = false
+user_id = 1
+username = "admin"
+password = "admin"

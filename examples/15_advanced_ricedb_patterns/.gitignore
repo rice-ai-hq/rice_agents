@@ -8,5 +8,11 @@ wheels/
 
 # Virtual environments
 .venv
+*.dat
 .env
-# /test_examples
+*.npy
+chroma_db/
+
+*.pkl
+*.pth
+.DS_Store
