@@ -2221,7 +2221,7 @@ requires-dist = [
     { name = "openai", specifier = ">=2.14.0" },
     { name = "pydantic", specifier = ">=2.12.5" },
     { name = "python-dotenv", specifier = ">=1.2.1" },
-    { name = "ricedb", extras = ["grpc", "embeddings"], git = "https://github.com/shankha98/ricedb-python.git?rev=0589e8ac1ee356c503d3231ca6804faf7abbe104" },
+    { name = "ricedb", extras = ["grpc", "embeddings"], git = "https://github.com/shankha98/ricedb-python.git?rev=a129a46469d27def86b935a409a6753fdbf5f290" },
 ]
 
 [package.metadata.requires-dev]
@@ -2235,7 +2235,7 @@ dev = [
 [[package]]
 name = "ricedb"
 version = "0.1.0"
-source = { git = "https://github.com/shankha98/ricedb-python.git?rev=0589e8ac1ee356c503d3231ca6804faf7abbe104#0589e8ac1ee356c503d3231ca6804faf7abbe104" }
+source = { git = "https://github.com/shankha98/ricedb-python.git?rev=a129a46469d27def86b935a409a6753fdbf5f290#a129a46469d27def86b935a409a6753fdbf5f290" }
 dependencies = [
     { name = "numpy" },
     { name = "requests" },

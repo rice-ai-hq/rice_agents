@@ -4,17 +4,14 @@ import uuid
 import json
 from typing import List, Dict, Optional, Any
 import logging
+from dotenv import load_dotenv
+
+load_dotenv()
 
 try:
-    from ricedb import RiceDBClient
-    from ricedb.utils import (
-        DummyEmbeddingGenerator,
-        SentenceTransformersEmbeddingGenerator,
-    )
+    from ricedb.client.grpc_client import GrpcRiceDBClient
 except ImportError:
-    RiceDBClient = None
-    DummyEmbeddingGenerator = None
-    SentenceTransformersEmbeddingGenerator = None
+    GrpcRiceDBClient = None
 
 logger = logging.getLogger(__name__)
 
@@ -27,33 +24,31 @@ class SwarmRiceDBHandler:
         username: str = "admin",
         password: str = "password123",
     ):
-        if RiceDBClient is None:
+        if GrpcRiceDBClient is None:
             raise ImportError("RiceDB not installed")
 
-        self.client = RiceDBClient(host)
-        if not self.client.connect():
-            logger.warning(f"Failed to connect to RiceDB at {host}")
+        # Remote connection settings from environment
+        HOST = os.environ.get("RICEDB_HOST", host)
+        PORT = int(os.environ.get("RICEDB_PORT", "80"))
+        PASSWORD = os.environ.get("RICEDB_PASSWORD", password)
+        SSL = os.environ.get("RICEDB_SSL", "false").lower() == "true"
+
+        self.client = GrpcRiceDBClient(host=HOST, port=PORT)
+        self.client.ssl = SSL
+
+        try:
+            self.client.connect()
+        except Exception as e:
+            logger.warning(f"Failed to connect to RiceDB at {HOST}:{PORT}: {e}")
 
         # Auth
         try:
-            self.client.login(username, password)
+            self.client.login(username, PASSWORD)
         except Exception as e:
             logger.warning(f"Login failed: {e}")
 
         self.user_id = user_id
         self.session_id = f"review-session-{uuid.uuid4().hex[:8]}"
-
-        # Setup Embeddings
-        try:
-            # Try efficient model if available
-            self.embedding_generator = SentenceTransformersEmbeddingGenerator(
-                model_name="all-MiniLM-L6-v2"
-            )
-        except:
-            logger.warning(
-                "SentenceTransformers not available, using Dummy embeddings."
-            )
-            self.embedding_generator = DummyEmbeddingGenerator(dimensions=384)
 
     def insert_code_file(self, file_path: str, content: str, project_root: str):
         rel_path = os.path.relpath(file_path, project_root)
@@ -65,13 +60,13 @@ class SwarmRiceDBHandler:
             "file_path": rel_path,
             "extension": os.path.splitext(rel_path)[1],
             "timestamp": time.time(),
+            "text": content,
         }
 
-        self.client.insert_text(
+        self.client.insert(
             node_id=node_id,
             text=content,
             metadata=metadata,
-            embedding_generator=self.embedding_generator,
             user_id=self.user_id,
         )
 
@@ -103,12 +98,12 @@ class SwarmRiceDBHandler:
             node_id = abs(hash(f"{agent_name}_{time.time()}")) % 10000000
             meta["agent"] = agent_name
             meta["timestamp"] = time.time()
+            meta["text"] = content
 
-            self.client.insert_text(
+            self.client.insert(
                 node_id=node_id,
                 text=content,
                 metadata=meta,
-                embedding_generator=self.embedding_generator,
                 user_id=self.user_id,
             )
 
@@ -140,10 +135,9 @@ class SwarmRiceDBHandler:
         if not query:
             query = "code"
 
-        results = self.client.search_text(
+        results = self.client.search(
             query=query,
             k=limit * 5,
-            embedding_generator=self.embedding_generator,
             user_id=self.user_id,
         )
         # Client-side filtering to ensure we only get code files

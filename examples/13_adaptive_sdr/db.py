@@ -1,54 +1,58 @@
+import contextlib
 import os
-import json
-from ricedb import RiceDBClient
-from ricedb.utils import SentenceTransformersEmbeddingGenerator
+
+from dotenv import load_dotenv
+from ricedb.client.grpc_client import GrpcRiceDBClient
+
+load_dotenv()
 
 
 class RiceDBHandler:
     def __init__(self):
-        self.client = RiceDBClient("localhost")
-        if not self.client.connect():
-            raise Exception("RiceDB connection failed")
+        # Remote connection settings from environment
+        HOST = os.environ.get("RICEDB_HOST", "localhost")
+        PORT = int(os.environ.get("RICEDB_PORT", "80"))
+        PASSWORD = os.environ.get("RICEDB_PASSWORD", "password123")
+        SSL = os.environ.get("RICEDB_SSL", "false").lower() == "true"
+
+        self.client = GrpcRiceDBClient(host=HOST, port=PORT)
+        self.client.ssl = SSL
 
         try:
-            self.client.login("admin", "password123")
-        except:
-            pass
+            self.client.connect()
+        except Exception as e:
+            raise Exception(f"RiceDB connection failed: {e}") from e
+
+        with contextlib.suppress(Exception):
+            self.client.login("admin", PASSWORD)
 
         self.user_id = 15
-        self.embed = SentenceTransformersEmbeddingGenerator(
-            model_name="all-MiniLM-L6-v2"
-        )
 
     def ingest_kb(self, text):
         print("Ingesting Knowledge Base...")
         chunks = [line for line in text.split("\n") if line.strip()]
         for i, chunk in enumerate(chunks):
-            self.client.insert_text(
+            self.client.insert(
                 node_id=20000 + i,
                 text=chunk,
-                metadata={"type": "kb"},
-                embedding_generator=self.embed,
+                metadata={"type": "kb", "text": chunk},
                 user_id=self.user_id,
             )
 
     def get_context(self, query):
-        results = self.client.search_text(
-            query=query, k=3, embedding_generator=self.embed, user_id=self.user_id
-        )
+        results = self.client.search(query=query, k=3, user_id=self.user_id)
         return "\n".join(
             [
-                r["metadata"]["text"]
+                r["metadata"].get("text", "")
                 for r in results
-                if r["metadata"].get("type") == "kb"
+                if r.get("metadata", {}).get("type") == "kb"
             ]
         )
 
     def log_interaction(self, lead_id, content):
-        self.client.insert_text(
+        self.client.insert(
             node_id=abs(hash(content)) % 10000000,
             text=content,
-            metadata={"type": "interaction", "lead_id": lead_id},
-            embedding_generator=self.embed,
+            metadata={"type": "interaction", "lead_id": lead_id, "text": content},
             user_id=self.user_id,
         )

@@ -4,17 +4,14 @@ import uuid
 import json
 from typing import List, Dict, Optional, Any
 import logging
+from dotenv import load_dotenv
+
+load_dotenv()
 
 try:
     from ricedb.client.grpc_client import GrpcRiceDBClient
-    from ricedb.utils import (
-        DummyEmbeddingGenerator,
-        SentenceTransformersEmbeddingGenerator,
-    )
 except ImportError:
     GrpcRiceDBClient = None
-    DummyEmbeddingGenerator = None
-    SentenceTransformersEmbeddingGenerator = None
 
 logger = logging.getLogger(__name__)
 
@@ -53,18 +50,6 @@ class SwarmRiceDBHandler:
         self.user_id = user_id
         self.session_id = f"review-session-{uuid.uuid4().hex[:8]}"
 
-        # Setup Embeddings
-        try:
-            # Try efficient model if available
-            self.embedding_generator = SentenceTransformersEmbeddingGenerator(
-                model_name="all-MiniLM-L6-v2"
-            )
-        except:
-            logger.warning(
-                "SentenceTransformers not available, using Dummy embeddings."
-            )
-            self.embedding_generator = DummyEmbeddingGenerator(dimensions=384)
-
     def insert_code_file(self, file_path: str, content: str, project_root: str):
         rel_path = os.path.relpath(file_path, project_root)
         # Deterministic node ID from path hash
@@ -75,13 +60,13 @@ class SwarmRiceDBHandler:
             "file_path": rel_path,
             "extension": os.path.splitext(rel_path)[1],
             "timestamp": time.time(),
+            "text": content,
         }
 
-        self.client.insert_text(
+        self.client.insert(
             node_id=node_id,
             text=content,
             metadata=metadata,
-            embedding_generator=self.embedding_generator,
             user_id=self.user_id,
         )
 
@@ -113,12 +98,12 @@ class SwarmRiceDBHandler:
             node_id = abs(hash(f"{agent_name}_{time.time()}")) % 10000000
             meta["agent"] = agent_name
             meta["timestamp"] = time.time()
+            meta["text"] = content
 
-            self.client.insert_text(
+            self.client.insert(
                 node_id=node_id,
                 text=content,
                 metadata=meta,
-                embedding_generator=self.embedding_generator,
                 user_id=self.user_id,
             )
 
@@ -150,10 +135,9 @@ class SwarmRiceDBHandler:
         if not query:
             query = "code"
 
-        results = self.client.search_text(
+        results = self.client.search(
             query=query,
             k=limit * 5,
-            embedding_generator=self.embedding_generator,
             user_id=self.user_id,
         )
         # Client-side filtering to ensure we only get code files

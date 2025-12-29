@@ -21,7 +21,7 @@ dependencies = [
     "openai>=2.14.0",
     "pydantic>=2.12.5",
     "python-dotenv>=1.2.1",
-    "ricedb[grpc,embeddings] @ git+https://github.com/shankha98/ricedb-python.git@0589e8ac1ee356c503d3231ca6804faf7abbe104",
+    "ricedb[grpc,embeddings] @ git+https://github.com/shankha98/ricedb-python.git@a129a46469d27def86b935a409a6753fdbf5f290",
 ]
 
 [project.urls]

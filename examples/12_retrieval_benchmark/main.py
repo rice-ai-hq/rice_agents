@@ -16,28 +16,32 @@ QUERY_COUNT = 20
 
 
 def generate_dataset(size, dim):
-    print(f"Generating {size} vectors of dimension {dim}...")
+    """Generate dataset with text for RiceDB and vectors for Pinecone."""
+    print(f"Generating {size} documents (with {dim}-dim vectors for Pinecone)...")
     dataset = []
     for i in range(size):
-        # Random vector normalized
+        # Random vector normalized (only needed for Pinecone)
         vec = np.random.rand(dim).astype(np.float32)
         vec = vec / np.linalg.norm(vec)
         dataset.append(
             {
                 "id": f"vec_{i}",
-                "values": vec.tolist(),
-                "metadata": {"text": f"Document {i} content benchmark payload"},
+                "values": vec.tolist(),  # Only used by Pinecone
+                "metadata": {
+                    "text": f"Document {i} about machine learning, neural networks, and AI research benchmarks."
+                },
             }
         )
     return dataset
 
 
 def benchmark_ricedb(dataset):
+    """Benchmark RiceDB using text-only inserts (server handles HDC encoding)."""
     print("\n--- Benchmarking RiceDB ---")
 
     HOST = os.environ.get("RICEDB_HOST", "grpc.ricedb-test-2.ricedb.tryrice.com")
     PORT = int(os.environ.get("RICEDB_PORT", "80"))
-    PASSWORD = os.environ.get("RICEDB_PASSWORD", "997f8f09f8c2affd90ffce58be912e4d")
+    PASSWORD = os.environ.get("RICEDB_PASSWORD", "ed294b4085f0959974cd6e0ca7dfffbd")
     SSL = os.environ.get("RICEDB_SSL", "false").lower() == "true"
 
     print(f"Connecting to {HOST}:{PORT} (SSL={SSL})...")
@@ -57,39 +61,43 @@ def benchmark_ricedb(dataset):
         print(f"Login failed: {e}")
         return None, None
 
-    # Ingest
-    print(f"Ingesting {len(dataset)} items...")
+    # Ingest using batch_insert (RiceDB handles HDC encoding server-side)
+    print(f"Ingesting {len(dataset)} items (text-only, server handles HDC encoding)...")
     start_time = time.time()
 
-    batch_data = []
+    # Prepare batch documents
+    batch_docs = []
     for i, item in enumerate(dataset):
-        # RiceDB uses integer node_id for graph features usually, but lets use index
-        batch_data.append(
+        batch_docs.append(
             {
                 "id": i + 100000,  # Offset to avoid collision with other demos
-                "vector": item["values"],
-                "metadata": item["metadata"],
+                "text": item["metadata"]["text"],
+                "metadata": {"title": f"Document {i}"},
+                "user_id": 1,
             }
         )
 
-    # Batch insert in chunks to avoid overwhelming the server/connection
-    batch_size = 100
-    for i in range(0, len(batch_data), batch_size):
-        chunk = batch_data[i : i + batch_size]
-        result = client.batch_insert(chunk, user_id=1)
-        # Check result
-        if not result.get("success", True):
-            print(f"RiceDB Insert Error in batch {i}: {result}")
+    # Batch insert in chunks
+    BATCH_SIZE = 100
+    total_inserted = 0
+    for i in range(0, len(batch_docs), BATCH_SIZE):
+        chunk = batch_docs[i : i + BATCH_SIZE]
+        try:
+            result = client.batch_insert(chunk)
+            count = result.get("count", len(chunk))
+            total_inserted += count
+        except Exception as e:
+            print(f"RiceDB Insert Error in batch {i // BATCH_SIZE + 1}: {e}")
 
     ingest_time = time.time() - start_time
-    print(f"RiceDB Ingestion Time: {ingest_time:.4f}s")
+    print(f"RiceDB Ingestion Time: {ingest_time:.4f}s ({total_inserted} docs)")
 
     # Query
     print(f"Running {QUERY_COUNT} queries...")
     start_time = time.time()
     for i in range(QUERY_COUNT):
-        query_vec = dataset[i]["values"]
-        client.search(query_vec, user_id=1, k=10)
+        query_text = dataset[i]["metadata"]["text"]
+        client.search(query_text, user_id=1, k=10)
     query_time = time.time() - start_time
     avg_query = query_time / QUERY_COUNT
     print(f"RiceDB Total Query Time: {query_time:.4f}s")
@@ -99,6 +107,7 @@ def benchmark_ricedb(dataset):
 
 
 def benchmark_pinecone(dataset, dim):
+    """Benchmark Pinecone using pre-computed vector embeddings."""
     print("\n--- Benchmarking Pinecone ---")
     try:
         pc = Pinecone(api_key=PINECONE_API_KEY)
@@ -145,17 +154,9 @@ def main():
             dim = idx_desc.dimension
             print(f"Detected Pinecone Index Dimension: {dim}")
         except Exception:
-            print(f"Index '{INDEX_NAME}' not found. Creating...")
-            pc.create_index(
-                name=INDEX_NAME,
-                dimension=dim,
-                metric="cosine",
-                spec=ServerlessSpec(cloud="aws", region="us-east-1"),
+            raise Exception(  # noqa: B904
+                "Failed to describe Pinecone index. Ensure the index exists."
             )
-            # Wait for ready
-            while not pc.describe_index(INDEX_NAME).status["ready"]:
-                time.sleep(1)
-            print(f"Created index '{INDEX_NAME}' with dimension {dim}")
 
     except Exception as e:
         print(f"Error accessing Pinecone: {e}")
